@@ -1,0 +1,185 @@
+Overview of all the features in this spu plugin (win32 only)
+
+
+Changing any of these settings can break the plugin.
+It's your responsibility to learn how to repair or not use those options.
+
+
+Rename plugin to sound.znc
+
+
+=====================================
+========= General Settings
+
+>> Driver
+- Method the sound card uses to stream output data
+
+0- DSound = preferred for XP (best card timing)
+1- XAudio2 = preferred for Vista / Win 7 (can use for XP but poorer timing)
+2- XAudio2 5.1 upmix = converts data to pseudo-5.1 format
+3- XAudio2 7.1 upmix = converts data to pseudo-7.1 format
+
+
+
+>> Volume
+- Lets you control the overall amount of sound output.
+
+- Only works with sound effects! Not QSound music.
+Range: 0-20
+
+
+
+>> Reverb
+- Different modules for the reverberation engine (echos, bass)
+
+0- None = fastest, no quality (may break games)
+1- Simple = Pete's mode that does basic emulation (okay)
+2- PSX reverb = Neill's formula that comes the closest to a real PSX
+
+
+
+>> Interpolation
+- Controls how the VAG voice samples are upsampled to 44.1 KHz output rate
+
+0- None = raw sample data (least realistic)
+1- Simple = Eternal-type filtering (okay, doesn't work so well with special sound effects)
+2- Gaussian = psx default (preferred, can be 'blurry' but is 'centered')
+3- 4-tap FIR = old Xebra algorithm (mix of Simple + Gaussian)
+4- Cubic = heightens the treble (more highs)
+5- Hermite = tries to boost bass/treble in a 'balanced' way
+6- Catmull-Rom = big bass/treble booster (can shred voices like Valkyrie Profile)
+7- Catmull-Rom (desharp) = medium bass/treble booster (can shred sound effects)
+
+
+
+>> Reverb boost
+- Turns up the amount of audible reverb for more bass, special effects
+
+(optional, user preference)
+
+
+
+
+=====================================
+========= Advanced Settings
+
+>> Latency
+- Controls the audio lag / response time
+
+
+Basically how long does it take for you to hear the audio data.
+Higher values can pad FPS dips from streaming cdrom data or slower HDDs.
+
+
+Each audio card responds differently to this. Unpredictable.
+Lower values can cause crackling or distortion.
+Play around with it to find a value you like. And your card accepts.
+
+
+
+>> Output filter 1
+- Frequency response lets the data behave differently based on frequency
+
+(not recommended but good if you want super highs in your audio)
+
+
+
+>> Output filter 2
+- Lets you change the texture of the final output stream
+
+(depends on how you want your audio to sound)
+ex. Gaussian (interp) + Catmull-rom desharp = less blurry, retains original flavor but more bass/treble
+
+Choose whatever strength you want - higher = more stronger effect.
+
+
+
+>> Volume - Voices
+- Lets you adjust the voices channel separately (higher, lower, normal)
+
+(usually sound effects, lower-quality speech, chip-generated music)
+
+
+
+
+
+=====================================
+========= Expert Settings
+
+WARNING:
+Messing around with any of these values can really break your experience.
+
+Delete file to regenerate default settings.
+
+
+
+In your plugins folder, you'll see 'spuPeopsSound_expert.ini'
+
+More importantly, you can pause the emu and tweak any of the values in the ini files.
+Continue the emu and usually the effects will show up immediately.
+
+Sometimes an emu restart is needed to gain the full FPS advantage.
+
+
+
+>> Version
+- Extra settings may change often, which will force a default rewrite of values
+
+
+
+>> LatencyTarget
+- If you have a specific 'base latency' value in mind, you can set it here to override the GUI
+
+- It's just a _request_ amount and not an exact science in practice
+Range: 0-200
+Range: -1 (ignore this value)
+
+
+
+>> UploadTimer
+- How long in ms the sound card buffer gets uploaded
+
+- Different sound cards behave very differntly to this (pops, crackling, stuttering, distortion)
+> Laptops tend to be 1-2 ms
+> Fast cards use 2-10 ms
+> Slow ones use 10-30 ms
+
+
+- Higher the value, less stable your latency will be
+(especially important for on-demand streaming, may pad with a higher latency though)
+
+- Lower values tend to be the ideal
+
+Range: 0-50
+
+
+
+>> SoundStretcher
+- Allows the output to be randomly padded in the middle of streams
+
+- Mainly if you have latency / upload streaming problems and don't mind a little extra data
+
+Range: 0-1
+
+
+
+>> APUcycles
+- Controls how often the spu generates data
+- (*) User decision
+
+- Lower values mean better. But requires lots more cpu power.
+- Default usually works with most emus since they call the spu at that speed anyway
+
+- Emus like ePSXe_shark 170 call the spu faster and can handle lower values like '22' or '10'
+- Result tends to be better Squaresoft sound effects (ex. Final Fantasy Tactics) or Vib Ribbon
+
+Range: 1-50
+
+
+
+>> ReverbTarget
+- You can override the amount of reverb strength with this value
+- Default = 33
+
+Range: 0-100
+Range: -1 (ignore this value)

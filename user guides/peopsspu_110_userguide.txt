@@ -1,0 +1,438 @@
+Overview of all the features in this spu plugin (win32 only)
+
+
+
+Changing any of these settings can break the plugin.
+It's your responsibility to learn how to repair or not use those options.
+
+
+Or rely on other plugins to fill in the problems with this one
+ex. Eternal SPU, ePSXe SPU
+
+
+
+
+WARNING:
+When switching spu plugins, it's best to --restart-- if possible from a
+fresh memcard or new game.
+
+Different settings can interfere and produce wrong output.
+
+
+
+NOTICE:
+CDDA does work with this plugin when using the correct emulators
+- ePSXe 170 (usually DOES NOT WORK)
+- ePSXe_shark 170
+- PCSX-Reloaded
+
+
+ePSXe_shark 170 is an upgrade to the original ePSXe 170
+- fixes CDDA streaming using iso, cdrom
+- fixes cdrom bugs
+- fixes memory timing
+- fixes other game / emu bugs
+
+
+
+=====================================
+========= General Settings
+
+>> Driver
+- Method the sound card uses to stream output data
+
+0- DSound = preferred for XP (best card timing)
+1- XAudio2 = preferred for Vista / Win 7 (can use for XP but poorer timing)
+2- XAudio2 5.1 upmix = converts data to pseudo-5.1 format
+3- XAudio2 7.1 upmix = converts data to pseudo-7.1 format
+
+
+
+>> Mode
+- Sound plugin timing engine modules
+
+
+(Timers)
+0- Thread = relies on a self-timer, poor timing
+1- Timer = relies on system clock, partly reliable and fast
+
+
+NOTES:
+- Sound effects, music changes may not sync correctly with emu
+- Games using interrupts may break these modes (can try IRQ wait)
+
+
+
+(Async legacy)
+2- Async simple = emu timer, allows fast-forward, reliable enough
+
+
+NOTES:
+- Uses skip blocking when output buffer is full so timing is not accurate
+- Can still break some sound effects or IRQ games (can try IRQ wait if needed)
+
+- Use this if you card can't seem to handle lockstep timers below
+
+
+
+(Async lockstep)
+3- Async wait = emu timer, lets cpu fall asleep
+4- Async on-demand = emu timer, heavy cdrom/cpu demanding, gives stable FPS
+
+
+NOTES:
+- Most emus do not allow fast-forward with this method (only ePSXe_shark 170 does)
+- If your emu has a framelimiter, turn off the GPU framelimiter to avoid 3x blocking (ex. ePSXe 170)
+- IRQ wait + XA pitch are ignored in these modes for timing reasons
+- Problem save states also work in these modes (ex. Valkyrie Profile, Metal Gear Solid)
+
+- These are the preferred modes for emulator testing, bug reporting (timing stays in step with emu)
+- Streaming games like Spyro 2/3, Novastorm work better with these modes
+- IRQ games like Metal Gear Solid, Valkyrie Profile, Misadventures of Tron Bonne behave better also
+
+
+NOTICE:
+- There's a new phantom padding engine available that wipes out old audio data.
+  Prevents echoing when your FPS dips or cdrom is streaming slower than normal.
+
+  When configured properly, you can run ePSXe_shark + PEOpS on a 1990s machine
+  with 4x cdrom. Fluid and echo-free.
+
+  Please see the expert settings about this.
+
+
+
+>> Volume
+- Lets you control the overall amount of sound output
+
+Range: 0-20
+
+
+
+>> Reverb
+- Different modules for the reverberation engine (echos, bass)
+
+0- None = fastest, no quality (may break games)
+1- Simple = Pete's mode that does basic emulation (okay)
+2- PSX reverb = Neill's formula that comes the closest to a real PSX
+
+
+
+>> Interpolation
+- Controls how the VAG voice samples are upsampled to 44.1 KHz output rate
+
+0- None = raw sample data (least realistic)
+1- Simple = Eternal-type filtering (okay, doesn't work so well with special sound effects)
+2- Gaussian = psx default (preferred, can be 'blurry' but is 'centered')
+3- 4-tap FIR = old Xebra algorithm (mix of Simple + Gaussian)
+4- Cubic = heightens the treble (more highs)
+5- Hermite = tries to boost bass/treble in a 'balanced' way
+6- Catmull-Rom = big bass/treble booster (can shred voices like Valkyrie Profile)
+7- Catmull-Rom (desharp) = medium bass/treble booster (can shred sound effects)
+
+
+
+>> Emulator
+- Switches plugin emulation clocks based on NTSC or PAL
+
+(not really recommeded since both clocks are very similar)
+
+
+
+>> XA Playing
+- Allows high-quality music, cutscene streaming to play
+
+
+
+>> Change XA Speed
+- Based on real-time FPS clock, modulates pitch of data to try and match
+
+(not recommended but around for legacy reasons)
+
+
+
+>> SPU IRQ - wait
+- Slows down spu speed for problem games that use interrupts
+
+ex. Metal Gear Solid, Valkyrie Profile
+
+
+
+>> Reverb boost
+- Turns up the amount of audible reverb for more bass, special effects
+
+(optional, user preference)
+
+
+
+>> Mono sound
+- Converts stereo sound to a single channel output
+
+
+
+>> Developer debug mode
+- Lets you see how the spu channels, xa, registers are running
+
+
+
+>> Sound recording mode
+- Lets you make wave files of the final output for later playback
+
+
+
+
+
+=====================================
+========= Advanced Settings
+
+>> Latency
+- Controls the audio lag / response time
+
+
+Basically how long does it take for you to hear the audio data.
+Higher values can pad FPS dips from streaming cdrom data or slower HDDs.
+
+
+Each audio card responds differently to this. Unpredictable.
+Lower values can cause crackling or distortion.
+Play around with it to find a value you like. And your card accepts.
+
+
+
+>> XA filter
+- Controls how the streaming XA is up-filtered to 44.1 KHz
+
+Choose any filter you like. Gaussian chosen to try and match normal output.
+
+The strength is usually left at basic - interpolates based on how the actual
+waveform looks like. Not forced at a certain rate.
+
+
+
+>> CDDA filter
+- Controls how the streaming CDDA is filtered to 44.1 KHz (variable timing engine)
+
+Choose any filter you like. Linear chosen to try and match normal output.
+
+The strength is usually left at basic - interpolates based on how the actual
+waveform looks like. Not forced at a certain rate.
+
+
+
+>> Output filter 1
+- Frequency response lets the data behave differently based on frequency
+
+(not recommended but good if you want super highs in your audio)
+
+
+
+>> Output filter 2
+- Lets you change the texture of the final output stream
+
+(depends on how you want your audio to sound)
+ex. Gaussian (interp) + Catmull-rom desharp = less blurry, retains original flavor but more bass/treble
+
+Choose whatever strength you want - higher = more stronger effect.
+
+
+
+>> Volume - XA
+- Lets you adjust the xa channel separately (higher, lower, normal)
+
+(usually moves, streaming high-quality music)
+
+
+
+>> Volume - CDDA
+- Lets you adjust the cdda channel separately (higher, lower, normal)
+
+(redbook audio)
+
+
+
+>> Volume - Voices
+- Lets you adjust the voices channel separately (higher, lower, normal)
+
+(usually sound effects, lower-quality speech, chip-generated music)
+
+
+
+
+
+=====================================
+========= Expert Settings
+
+WARNING:
+Messing around with any of these values can really break your experience.
+
+Delete file to regenerate default settings.
+
+
+
+In your plugins folder, you'll see 'spuPeopsSound_expert.ini'
+
+More importantly, you can pause the emu and tweak any of the values in the ini files.
+Continue the emu and usually the effects will show up immediately.
+
+Sometimes an emu restart is needed to gain the full FPS advantage.
+
+
+
+>> Version
+- Extra settings may change often, which will force a default rewrite of values
+
+
+
+>> LatencyTarget
+- If you have a specific 'base latency' value in mind, you can set it here to override the GUI
+
+- It's just a _request_ amount and not an exact science in practice
+
+Range: 0-200
+Range: -1 (ignore this value)
+
+
+
+>> UploadTimer
+- How long in ms the sound card buffer gets uploaded
+
+- Different sound cards behave very differntly to this (pops, crackling, stuttering, distortion)
+> Laptops tend to be 1-2 ms
+> Fast cards use 2-10 ms
+> Slow ones use 10-30 ms
+
+
+- Higher the value, less stable your latency will be
+- Lower values tend to be the ideal
+
+
+NOTE:
+Higher upload timers can fix some problems when streaming CD Audio from a cdrom drive. Like looping samples or other oddities.
+
+
+Range: 0-50
+
+
+
+>> SoundStretcher
+- Allows the output to be randomly padded in the middle of streams
+
+- Mainly if you have latency / upload streaming problems and don't mind a little extra data
+
+Range: 0-1
+
+
+
+>> APUcycles
+- Controls how often the spu generates data
+- (*) User decision
+
+- Lower values mean better. But requires lots more cpu power.
+- Default usually works with most emus since they call the spu at that speed anyway
+
+- Emus like ePSXe_shark 170 call the spu faster and can handle lower values like '22' or '10'
+- Result tends to be better Squaresoft sound effects (ex. Final Fantasy Tactics) or Vib Ribbon
+
+Range: 1-50
+
+
+
+>> PhantomPad
+- DSound buffer underrun padding engine
+- (*) User decision
+
+- Used to wipe out old audio data that can create echos when the emu isn't calling the spu enough
+
+Range: 0-1
+
+
+
+>> PhantomPadSize
+- Everytime the phantom engine runs every 1ms, it wipes out this much data in ms
+
+Range: 0-1000
+
+
+
+>> PhantomPostPad
+- After each sound upload, this much data is wiped as an audio deadzone
+- Works with both DSound and XAudio2
+
+- You can raise this value to provide more padding safety when a FPS dip occurs
+
+Range: 0-5000
+
+
+
+>> LatencyRestart
+- When the sound buffer needs to restart, this is the extra padding amount for a straem reset
+
+Range: 0-200
+
+
+
+>> UploadLowReset
+- When the buffer goes below this value in ms, the audio stream restarts
+
+Range: 0-200
+
+
+
+>> UploadHighFull
+- The maximum buffer value that the stream can hold at a time
+ex. LATENCY + 30 = maximum storage
+
+Range: 0-200
+
+
+
+>> UploadHighReset
+- An overfull buffer reset detection (usually when DSound buffer dips below 0 by accident)
+ex. LATENCY + 60+ = buffer restart
+
+Range: 0-200
+
+
+
+>> ReverbTarget
+- You can override the amount of reverb strength with this value
+- Default = 33
+
+Range: 0-100
+Range: -1 (ignore this value)
+
+
+
+>> AsyncWaitBlocker
+- Amount of time to wait before a buffer upload can continue in 'async wait' mode
+ex. LATENCY + 13 = upload, LATENCY + 14 = block until ready
+
+- Using high values can create timing problems so try to keep it lower
+
+Range: 0-100
+
+
+
+>> AsyncOndemandBlocker
+- Amount of time to wait before a buffer upload can continue in 'async on-demand' mode
+ex. LATENCY + 8 = upload, LATENCY + 9 = block until ready
+
+- Using high values can create timing problems so try to keep it lower
+
+Range: 0-100
+
+
+
+>> DebugSoundBuffer
+- Turns on sound buffering debug logs to track buffering status
+- Mainly for detecting underruns causing unusual resets
+
+Range: 0-1
+
+
+
+>> DebugCdxaBuffer
+- Turns on cdxa buffering debug logs to track buffering status
+- Mainly for detecting underruns causing distortion
+
+Range: 0-1
